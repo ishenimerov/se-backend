@@ -26,5 +26,33 @@ const getUsers = (req, res) => {
         return res.status(200).json(data);
     });
 };
+const updateUser = (req, res) => {
+    const userId = req.params.id;
+    const updatedUserInfo = req.body;
 
-module.exports = { getUsers };
+    db.query('UPDATE users SET ? WHERE id = ?', [updatedUserInfo, userId], (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        return res.status(200).json({ message: 'User updated successfully' });
+    });
+};
+
+const deleteUser = (req, res) => {
+    const userId = req.params.id;
+
+    db.query('DELETE FROM users WHERE id = ?', userId, (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        return res.status(200).json({ message: 'User deleted successfully' });
+    });
+};
+
+module.exports = { getUsers, updateUser, deleteUser };
