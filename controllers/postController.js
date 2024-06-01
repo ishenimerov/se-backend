@@ -11,7 +11,7 @@ const getPosts = (req, res) => {
             conditions.push(`${key} = ?`);
         }
     }
-
+k
     if (conditions.length > 0) {
         sql += ' WHERE ' + conditions.join(' AND ');
     }
