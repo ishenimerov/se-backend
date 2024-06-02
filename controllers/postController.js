@@ -11,7 +11,7 @@ const getPosts = (req, res) => {
             conditions.push(`${key} = ?`);
         }
     }
-k
+
     if (conditions.length > 0) {
         sql += ' WHERE ' + conditions.join(' AND ');
     }
@@ -27,4 +27,20 @@ k
     });
 };
 
-module.exports = { getPosts };
+const updatePost = (req, res) => {
+    const { id } = req.params;
+    const { title, content } = req.body;
+    const sql = 'UPDATE posts SET title = ?, content = ? WHERE id = ?';
+
+    db.query(sql, [title, content, id], (err, data) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        if (data.affectedRows === 0) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+        return res.status(200).json({ message: 'Post updated successfully' });
+    });
+};
+
+module.exports = { getPosts, updatePost };
