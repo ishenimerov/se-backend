@@ -43,10 +43,14 @@ const updateUser = (req, res) => {
 
 const deleteUser = (req, res) => {
     const userId = req.params.id;
+    console.log(userId);
+    if (!userId) {
+        return res.status(400).json({ message: 'Invalid request: Missing user ID' });
+    }
 
     db.query('DELETE FROM users WHERE id = ?', userId, (err, result) => {
         if (err) {
-            return res.status(500).json({ error: err.message });
+            return res.status(500).json({ error: 'Database error: ' + err.message });
         }
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'User not found' });
@@ -54,5 +58,6 @@ const deleteUser = (req, res) => {
         return res.status(200).json({ message: 'User deleted successfully' });
     });
 };
+
 
 module.exports = { getUsers, updateUser, deleteUser };
