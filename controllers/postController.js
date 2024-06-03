@@ -27,20 +27,33 @@ const getPosts = (req, res) => {
     });
 };
 
-const updatePost = (req, res) => {
-    const { id } = req.params;
-    const { title, content } = req.body;
-    const sql = 'UPDATE posts SET title = ?, content = ? WHERE id = ?';
+const deletePost = (req, res) => {
+    const postId = req.params.id;
+    console.log(postId);
+    if (!postId) {
+        return res.status(400).json({ message: 'Invalid request: Missing user ID' });
+    }
 
-    db.query(sql, [title, content, id], (err, data) => {
+    db.query('DELETE FROM posts WHERE id = ?', postId, (err, result) => {
         if (err) {
-            return res.status(500).json({ error: err.message });
+            return res.status(500).json({ error: 'Database error: ' + err.message });
         }
-        if (data.affectedRows === 0) {
-            return res.status(404).json({ message: 'Post not found' });
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'User not found' });
         }
-        return res.status(200).json({ message: 'Post updated successfully' });
+        return res.status(200).json({ message: 'User deleted successfully' });
     });
 };
 
-module.exports = { getPosts, updatePost };
+const createPost = (req, res) =>{
+    const postInfo = req.body;
+
+    db.query('INSERT INTO posts SET ?', postInfo, (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        return res.status(201).json({ message: 'Post created successfully', postId: result.insertId });
+    });
+}
+
+module.exports = { getPosts, deletePost, createPost };

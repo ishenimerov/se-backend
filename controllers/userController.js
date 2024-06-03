@@ -26,6 +26,16 @@ const getUsers = (req, res) => {
         return res.status(200).json(data);
     });
 };
+const createUser = (req, res) => {
+    const userInfo = req.body;
+
+    db.query('INSERT INTO users SET ?', userInfo, (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        return res.status(201).json({ message: 'User created successfully', userId: result.insertId });
+    });
+};
 const updateUser = (req, res) => {
     const userId = req.params.id;
     const updatedUserInfo = req.body;
@@ -60,4 +70,4 @@ const deleteUser = (req, res) => {
 };
 
 
-module.exports = { getUsers, updateUser, deleteUser };
+module.exports = { getUsers, updateUser, deleteUser, createUser };
