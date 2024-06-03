@@ -7,7 +7,7 @@ const router = express.Router();
 
 //Post
 router.get('/posts', getPosts);
-router.get('/posts', createPost);
+router.post('/posts/create', createPost);
 router.delete('/posts/:id', deletePost);
 
 //User
