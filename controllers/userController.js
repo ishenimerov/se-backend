@@ -23,12 +23,23 @@ const getUsers = (req, res) => {
         if (data.length === 0) {
             return res.status(404).json({ message: 'No users found matching the criteria' });
         }
+        try {
+            data.forEach(user => {
+                if (user.user_preference) {
+                    user.user_preference = JSON.parse(user.user_preference);
+                }
+            });
+        } catch (parseError) {
+            console.error('Error parsing preferences JSON:', parseError);
+            return res.status(500).json({ error: 'Error parsing user preferences' });
+        }
         return res.status(200).json(data);
     });
 };
 const createUser = (req, res) => {
     const userInfo = req.body;
-
+console.log(userInfo);
+    userInfo.user_preference = JSON.stringify(userInfo.user_preference);
     db.query('INSERT INTO users SET ?', userInfo, (err, result) => {
         if (err) {
             return res.status(500).json({ error: err.message });
